@@ -10,5 +10,5 @@
 
 - 
 - 
-- email : 
-- phone : 
+- email : inchang0326@naver.com
+- phone : 010-7279-6530
