@@ -1,7 +1,7 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.PriorityQueue;
 
 public class No1251_makeOne {
 
@@ -11,11 +11,11 @@ public class No1251_makeOne {
 		for (int t = 1; t <= testCase; t++) {
 
 			ArrayList<Island> islandList = new ArrayList<>();
-			ArrayList<Turnel> turnelList = new ArrayList<>();
+			PriorityQueue<Turnel> turnelList = new PriorityQueue<>();
 
 			int num = Integer.parseInt(br.readLine());
 
-			// 노드(섬)
+			// Island(N) init
 			int[][] xy = new int[num][num];
 			for (int i = 0; i < 2; i++) {
 				String[] st = br.readLine().split(" ");
@@ -23,13 +23,13 @@ public class No1251_makeOne {
 					xy[i][j] = Integer.parseInt(st[j]);
 				}
 			}
-			int[] parent = new int[num];
 			for (int i = 0; i < num; i++) {
-				islandList.add(new Island(xy[0][i], xy[1][i], i));
-				parent[i] = i;
+				Island island = new Island(xy[0][i], xy[1][i]);
+				island.setParent(island);
+				islandList.add(island);
 			}
 
-			// 엣지(터널)
+			// Turnel(E) init
 			double tax = Double.parseDouble(br.readLine());
 			for (int i = 0; i < islandList.size(); i++) {
 				Island curr = islandList.get(i);
@@ -39,24 +39,24 @@ public class No1251_makeOne {
 				}
 			}
 
-			// 최소 간선 합(최소스패닝트리)
-			Collections.sort(turnelList);
+			// MST - Kruskal
 			double minCost = 0;
-			for (int i = 0; i < turnelList.size(); i++) {
-				int s = find(parent, turnelList.get(i).getStart().getNumber());
-				int e = find(parent, turnelList.get(i).getEnd().getNumber());
-
-				if (s == e)
-					continue;
-				parent[s] = e;
-				minCost += turnelList.get(i).getCost();
+			while(!turnelList.isEmpty()) {
+				Turnel turnel = turnelList.poll();
+				Island sParent = findParent(turnel.getStart());
+				Island eParent = findParent(turnel.getEnd());
+				
+				// Cycle check, if their parents are not identical then it's safe.
+				if(sParent != eParent) {
+					sParent.setParent(eParent);
+					minCost += turnel.getCost();
+				}
 			}
-
 			System.out.println("#" + t + " " + Math.round(minCost));
 		}
 	}
 
-	public static double getWeight(Island one, Island another, double tax) {
+	private static double getWeight(Island one, Island another, double tax) {
 		double result = 0.0;
 		double dist = Math.sqrt(Math.pow(Math.abs(another.getX() - one.getX()), 2)
 				+ Math.pow(Math.abs(another.getY() - one.getY()), 2));
@@ -64,25 +64,28 @@ public class No1251_makeOne {
 		return result;
 	}
 
-	public static int find(int[] parent, int x) {
-		if (parent[x] == x) {
-			return x;
+	
+	
+	private static Island findParent(Island island) {
+		if(island.getParent() == island) {
+			return island;
+		} else {
+			return findParent(island.getParent());	
 		}
-		return parent[x] = find(parent, parent[x]);
 	}
 }
 
 class Island {
-	private int x, y, number;
+	private int x, y;
+	private Island parent;
 
 	public Island() {
 
 	}
 
-	public Island(int x, int y, int number) {
+	public Island(int x, int y) {
 		this.x = x;
 		this.y = y;
-		this.number = number;
 	}
 
 	public int getX() {
@@ -93,8 +96,12 @@ class Island {
 		return y;
 	}
 
-	public int getNumber() {
-		return number;
+	public Island getParent() {
+		return parent;
+	}
+	
+	public void setParent(Island parent) {
+		this.parent = parent;
 	}
 }
 
