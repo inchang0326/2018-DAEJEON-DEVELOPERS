@@ -2,7 +2,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
-//백준 15683번 감시
+// 감시
 
 public class BAEKJOON_15683 {
 
@@ -62,7 +62,7 @@ public class BAEKJOON_15683 {
 				for(int i=0; i<4; i++) {
 					int temp = 0;
 					int[][] copied = makeCopy(map, row, col);		
-				
+					
 					if(i == 0) { // 상
 						
 						temp = monitorUp(copied, curRow, curCol);

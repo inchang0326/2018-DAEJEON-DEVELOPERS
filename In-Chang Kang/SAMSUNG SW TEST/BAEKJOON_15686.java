@@ -1,11 +1,9 @@
-package practice20180320;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 
-// 백준 15686번 치킨배달
+// 치킨배달
 
 public class BAEKJOON_15686 {
 
